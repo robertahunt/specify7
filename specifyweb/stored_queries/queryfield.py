@@ -12,6 +12,7 @@ class QueryField(namedtuple('QueryField', [
     'value',
     'negate',
     'display',
+    'format_name',
     'sort_type'])):
 
     @classmethod
@@ -28,6 +29,7 @@ class QueryField(namedtuple('QueryField', [
                    value     = field.startValue if value is None else value,
                    negate    = field.isNot,
                    display   = field.isDisplay,
+                   format_name = field.formatName,
                    sort_type = field.sortType)
 
     def add_to_query(self, query, objformatter, no_filter=False, collection=None, join_cache=None):
@@ -49,4 +51,5 @@ class QueryField(namedtuple('QueryField', [
                                            op_num=None if no_filter else self.op_num,
                                            negate=self.negate,
                                            collection=collection,
-                                           join_cache=join_cache)
+                                           join_cache=join_cache,
+                                           formatter=self.format_name)
