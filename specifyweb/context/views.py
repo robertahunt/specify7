@@ -27,7 +27,7 @@ def set_collection_cookie(response, collection_id):
 
 def users_collections(cursor, user_id):
     cursor.execute("""
-    select c.usergroupscopeid, c.collectionname from collection c
+    select distinct c.usergroupscopeid, c.collectionname from collection c
     inner join spprincipal p on p.usergroupscopeid = c.usergroupscopeid
     inner join specifyuser_spprincipal up on up.spprincipalid = p.spprincipalid
     inner join specifyuser u on u.specifyuserid = up.specifyuserid and p.grouptype is null
@@ -44,7 +44,7 @@ def user_collection_access(request, userid):
     cursor = connection.cursor()
 
     if request.method == 'PUT':
-        collections = json.loads(request.raw_post_data)
+        collections = json.loads(request.body)
         user = Specifyuser.objects.get(id=userid)
         with transaction.commit_on_success():
             cursor.execute("delete from specifyuser_spprincipal where specifyuserid = %s", [userid])
@@ -142,7 +142,7 @@ def collection(request):
     available_collections = users_collections(connection.cursor(), request.specify_user.id)
     if request.method == 'POST':
         try:
-            collection = Collection.objects.get(id=int(request.raw_post_data))
+            collection = Collection.objects.get(id=int(request.body))
         except ValueError:
             return HttpResponseBadRequest('bad collection id', content_type="text/plain")
         except Collection.DoesNotExist:

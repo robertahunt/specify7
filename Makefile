@@ -3,7 +3,7 @@ VIRTUAL_ENV ?= /usr
 PYTHON = $(VIRTUAL_ENV)/bin/python
 PIP = $(VIRTUAL_ENV)/bin/pip
 
-.PHONY: all clean runserver pip_requirements django_migrations frontend python_prep build
+.PHONY: all clean runserver webpack_watch pip_requirements django_migrations frontend python_prep build
 
 all: build django_migrations
 
@@ -33,6 +33,9 @@ clean:
 	$(MAKE) -C specifyweb/frontend/js_src clean
 
 runserver:
-	$(PYTHON) specifyweb/manage.py runserver
+	$(PYTHON) manage.py runserver
+
+webpack_watch:
+	$(MAKE) -C specifyweb/frontend/js_src watch
 
 .FORCE:
